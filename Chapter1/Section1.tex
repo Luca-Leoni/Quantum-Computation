@@ -1,0 +1,136 @@
+\section{Postulates of quantum mechanics}
+
+The course has the aim of introducing the follower to the working principles of quantum computing and how they work on a fundamental physical and mathematical level. Therefore, will come to the mind of the reader that all the theory ahead of us will rely on quantum mechanical principles that we will need to introduce first. This will be useful also to the experienced reader since a refresh can is always good, and also because we may want to restate the fundamental of quantum mechanics specifically for application to quantum calculators.
+
+Quantum mechanics(QM) is the modern fundamental theory that describes reality and relies on a series of assumptions, or postulates, that allow us to describe the physical systems. There is not a standard version of the postulates, can vary in numbers, but we are going to use the description of QM that uses three postulates to define: states, evolution and mesuraments.
+
+\subsection{Postulate 1}
+
+\dfn{States}{
+    The set containing the possible states of the system is a Hilbert space $\mathcal{H}$ and of the vectors $\ket{\psi} \in \mathcal{H}$ only the normalized ones can describe the real state of the system.
+}
+
+\noindent
+This definition of the notion of state is really different from the simple coordinate couples of position and momenta $(\vb{r}, \vb{p})$ that we had in classical mechanics. In this situation the states are pure vectors inside a vector space that is the Hilbert space itself, meaning that all the properties known from linear algebra theory apply to them. In particular, we have the closure property of sum and multiplication with a scalar, or the presence of a scalar product $<\vdot,\vdot> : \mathcal{H}\otimes\mathcal{H} \to \mathbb{C}$. Those are all things that need to be present inside $\mathcal{H}$ to be an Hilbert space, and define those inside our restricted series of systems that describe quantum computer is simple. In fact, the main quantum computers rely on systems with a finite number of levels which posses a \textbf{finite dimensional} $\mathcal{H}$ which allow us to highly simplify all the computations thanks to the following 
+
+\thm{}{If we have that $\dim \mathcal{H} = N$ then the space is holomorphic to $\mathbb{C}^{N}$.}
+
+\noindent
+That is a known fact indeed, but allow us to directly describe all the states of the system as complex vectors, along with the possible bases and the inner product. In fact, if we have a space with dimension $N$ we can write down directly an orthonormal base for the system as the canonical one and write whatever vector $\ket{\psi}$ as a superposition of those
+\begin{align*}
+    &\ket{i} = \begin{pmatrix}
+        0\\
+        \vdots\\
+        1\\
+        \vdots\\
+        0\\
+    \end{pmatrix}
+    & \ket{\psi} = \sum_i \lambda_i \ket{i}.
+\end{align*}
+The other part is that we can imagine the inner product inside this space to be exactly the one of the complex space, having so that we can simply define it by first define the raw vectors as follows
+\begin{align*}
+    \bra{\phi} = \left(\ket{\phi}\right)^\dagger =  \begin{pmatrix}
+        \alpha_0^*&
+        \cdots&
+        \alpha_i^*&
+        \cdots&
+        \alpha_N^*
+    \end{pmatrix}.
+\end{align*}
+Then, we can use the normal algebra to define the following inner product inside the space
+\begin{align*}
+    \braket{\phi}{\psi} = \alpha_0^*\lambda_0 + \cdots + \alpha_N^*\lambda_N = \sum_i \alpha_i^*\lambda_i.
+\end{align*}
+Knowing it allow also to define to norm inside to space simply as $\norm{\psi}^2 = \braket{\psi}{\psi}$, which tells us that for a state to be normalized means that the following must be true, always
+\begin{align}
+    \braket{\psi}{\psi} = \sum_i \abs{\lambda_i}^2 = 1.
+\end{align}
+Which also show us how a state of a system doesn't care about the phase since even if I redefine it to be $\ket{\phi} = \exp(i\theta)\ket{\psi}$ will still be normalized, but one can also see how also observables are not touched.
+
+We now have the full construction of the space we are going to use during our computations, and would be kind of interesting to use it to see how $\mathcal{H}$ will look like in some simple cases. In particular, we want to show how the states of a \textbf{qubit} are formed. The latter is non-other than a two level system, which so has $\dim\mathcal{H} = 2$, meaning that the base can be seen simply as
+
+\begin{align*}
+    &\ket{0} = \begin{pmatrix}
+        1\\
+        0
+    \end{pmatrix},
+    &\ket{1} = \begin{pmatrix}
+        0\\
+        1
+    \end{pmatrix}.
+\end{align*}
+Which we will call as \textbf{computational base}, and all the state can be represented with them using a general linear combination that is normalized, so
+
+\begin{align*}
+    &\ket{\psi} = \begin{pmatrix}
+        a\\
+        b
+    \end{pmatrix},
+    & \abs{a}^2 + \abs{b}^2 = 1.
+\end{align*}
+This is effectively simple to use not only for its mathematical simplicity but also because a really simple geometric representation for those state can be used. In fact, one can see the following
+
+\thm{}{
+    A state $\ket{\psi}$ in a qubit can be represented, instead of using the $a$ and $b$ couple, using two angles $\theta \in [0, \pi]$ and $\phi \in [0, 2\pi]$ using the following form 
+    \begin{equation}
+        \ket{\psi} = \cos\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sin\left(\frac{\theta}{2}\right)\ket{1}.
+    \end{equation}
+}
+\pf{Proof}{
+    Devo pensare alla dimostrazione.
+}
+
+\noindent
+This allows us to see a state of the system as a unitary vector on a circumference, referenced by the angles and so the direction in which is pointing. This is indeed remarkable as we will see, since this anticipate the fact that every possible modification of a state is non-other than a rotation, as we will see.
+
+In this construction we can also easily create systems composed by a series of qubit together, since the Hilbert space generated will be the tensor product of the single qubit ones as 
+\begin{displaymath}
+    \mathcal{H}_N = \mathcal{H} \otimes \cdots \otimes \mathcal{H} = \mathbb{C}^{2N}. 
+\end{displaymath}
+Since we are working with a known operation, that is the tensor product, we can also readily create basis functions for the new states by simply make the tensor product of the ones of the older states. For example, calling $\{\ket{0}_1, \ket{1}_1\}$ the base of the first qubit and $\{\ket{0}_2, \ket{1}_2\}$ the base of the second one can easily see that the base for the combined system will be 
+\begin{displaymath}
+    \{\ket{0}_1\ket{0}_2,\ket{0}_1\ket{1}_2, \ket{1}_1\ket{0}_2, \ket{1}_1\ket{1}_2 \}.
+\end{displaymath}
+Most of the time the subscripts are omited, having so that $\ket{0}_1\ket{0}_2 = \ket{00}$, but in this case the order in which you write the basis is important and needs to be remembered! The importance of order is also noticeable in the creation of a two-qubit state by using single qubit ones, if taken $\ket{\psi} = (a,b)$ and $\ket{\phi} = (cd)$ one can see how
+\begin{align*}
+    &\ket{\psi\phi} = \left(a\ket{0} + b\ket{1}\right)\otimes\left( c\ket{0} + d\ket{1} \right) \neq \left(c\ket{0} + d\ket{1}\right)\otimes\left( a\ket{0} + b\ket{1} \right) =  \ket{\phi\psi}.
+\end{align*}
+In fact the coefficients on the bases $\ket{01}$ and $\ket{10}$ are different, and the order here is important, so the states are different.
+
+\nt{
+    It's interesting to note how the number of basis elements increase a lot as the number of qubits are inserted inside the system. In particular, the dimension of the space scales as $2^N$. This is in contrast with what happens for the phase space in classical dynamics, where to describe a particle I need 6 coordinates and as the particle increase the number rise as $6N$. Basically the quantum systems become more complex much quicker and that hints us why is difficult simulate quantum systems on classical computers.
+}
+
+\subsection{Postulate 2}
+
+\dfn{Evolution}{
+    The evolution of a closed system can be represented using a unitary operator $\mathcal{U}(t_1, t_2)$ that acts on the state making it evolve in time as follows
+    \begin{equation}
+        \ket{\psi(t_2)} = \mathcal{U}(t_1, t_2)\ket{\psi(t_1)}.
+    \end{equation}
+}
+
+\noindent
+This is obviously a simplified version of the evolution postulate, which in reality should refer to the evolution of the state based on the Schr\"odinger equation(SE). In fact, we can also see how this principle can be derived directly from the latter. Therefore, let's start from the SE recalling its form
+\begin{equation}
+    \label{eq:SchEque}
+    i\hbar\pdv{\ket{\psi(t)}}{t} = \hat{\mathcal{H}}\ket{\psi(t)},
+\end{equation}
+where, being in a closed system, the Hamiltonian will be time independent. Under those conditions we can easily integrate the equation finding out the following general form for the evolution of the system
+\begin{equation}
+    \ket{\psi(t)} = \exp\left( -i\frac{\hat{\mathcal{H}}}{\hbar}(t-t') \right)\ket{\psi(t')} = \mathcal{U}(t', t)\ket{\psi(t')}.
+\end{equation}
+In this way we have found out an analytic form for the evolution operator that we were describing. Also, one can actually see how since $\hat{\mathcal{H}}$ is assumed to be selfadjoint, $\hat{\mathcal{H}}^\dagger = \hat{\mathcal{H}}$, then the following holds true
+\begin{align}
+    \mathcal{U}^\dagger(t', t) = \mathcal{U}(t, t') = \mathcal{U}^{-1}.
+\end{align}
+Which is telling us that $\mathcal{U}$ is effectively unitary as required by the postulate, but not only that. In fact inside this construction we will also have that the operator $\mathcal{U}$ will be also \textbf{linear} and \textbf{invertible}, giving always rise to reversible operations.
+\nt
+{
+    The properties of $\mathcal{U}$ of being linear and invertible are something that was not really present inside classical computers, in fact we will use that operator to manipulate qubits and every operation can be inverted. That didn't hold true for classical bits, where operations were often irreversible, or neither linear.
+}
+
+\subsection{Postulate 3}
+When we will do it I will add it here.
+
+\newpage
