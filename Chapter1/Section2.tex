@@ -76,7 +76,7 @@ This theorem tells us that only $4$ parameters are needed in order to define eve
 \end{minipage}
 
 \noindent
-One can also notice that the final matrix obtained is exactly the $X$ Pauli matrix, with assure to us that is unitary since every one of them has the property $X^2 = Y^2 = Z^2 = \mathbb{1}$. This matrix is, in fact, drawn as $\bigotimes$ symbol inside circuits to recall that the $X$ matrix is getting used on a certain qubit.
+One can also notice that the final matrix obtained is exactly the $X$ Pauli matrix, with assure to us that is unitary since every one of them has the property $X^2 = Y^2 = Z^2 = \mathbb{1}$. This matrix is, in fact, drawn as $\bigoplus$ symbol inside circuits to recall that the $X$ matrix is getting used on a certain qubit.
 
 \paragraph{Hadamart.} This is the first real quantum gate that was thought of, the idea is the one of creating superpositions of the normal states. This can be done really easily since the gate that we are interested in, and it's truth table, is
 
@@ -275,3 +275,33 @@ Basically, based on the initial state of the system we are able to generate one 
         \psi^+ = \frac{1}{\sqrt{2}} = \left( \ket{00} - \ket{11} \right)
     \end{equation}
 }
+
+\subsection{N qubits gates}
+
+We can now step into assuming to have a general number of qubits to work with and see how some general gates can effectively be created also in this case, in particular two main types of gates play a huge role in the whole theory of quantum computers.
+
+\paragraph{Toffoli.} This is a specific 3-qubit gate that has the aim of making a control NOT gate using two different controls. Basically, having two controls the idea is to apply the NOT to the target if and only if both the two controls are in state $\ket{1}$. For this reason the gate is also called CCNOT and has the following matrix and circuit representation
+
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Immagini/Toffoli.pdf}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+    \begin{displaymath}
+        \text{CCNOT} = \begin{pmatrix}
+            1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+            0 & 1 & 0 & 0 & 0 & 0 & 0 & 0\\
+            0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
+            0 & 0 & 0 & 1 & 0 & 0 & 0 & 0\\
+            0 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
+            0 & 0 & 0 & 0 & 0 & 1 & 0 & 0\\
+            0 & 0 & 0 & 0 & 0 & 0 & 0 & 1\\
+            0 & 0 & 0 & 0 & 0 & 0 & 1 & 0\\
+        \end{pmatrix}
+    \end{displaymath}
+\end{minipage}
+
+\noindent
+The task of writing down the truth table from the matrix representation is left to the reader to effectively see how the aim of applying a NOT to the last qubit only if the first two are in $\ket{1}$ is accomplished.
+
+\paragraph{N control.} These gates are a generalization of the Toffoli one to an N number of control and an M number of targets. In general the idea is to apply a general M-qubit gate $\mathcal{U}$ to the targets qubits if the N controls are in the state $\ket{1}$, the general form of the matrix is analogous to the one already seen for the CU gates and the circuit is also totally analogous to the Toffoli and CU one. 
