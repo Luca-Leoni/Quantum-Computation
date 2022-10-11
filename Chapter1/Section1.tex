@@ -135,6 +135,7 @@ Which is telling us that $\mathcal{U}$ is effectively unitary as required by the
 So far all the description of QM relies on principles that are totally deterministic, solving the SE does not lead to probabilistic results. Nevertheless, the theory is renown to give a probabilistic interpretation of reality, and this comes from the definition of how we measure physical quantities. To understand it we shall write down the definition in the mathematical terms of linear algebra, where measuring means apply a linear operator to the state of the system and evaluate averages on them as follows.
 \dfn{Measure}
 {
+    \label{def:measure}
     Let $\Lambda$ be a measurable quantity with $\{ \lambda_n \}_{n\in \mathcal{I}}$ its possible values, $\mathcal{I}$ is a set of indices, a measurement of this quantity is defined by a set of operator $\{ \hat{\Pi}_n \}_{n\in \mathcal{I}}$ that respect the following relations:
     \begin{enumerate}
         \item If the state of the system is a generic $\ket{\psi}$ then the probability of measuring $\lambda_n$ is given by
@@ -148,68 +149,23 @@ So far all the description of QM relies on principles that are totally determini
     \end{enumerate}
 }
 \noindent
-Therefore, a measure is simply a set of operators that is able to describe the probability of having a certain outcome from an experiment. Also, the properties that those operators satisfy should recall to the reader a certain type of operators called \textbf{projector operators} $\hat{P}$. The latter are known to be defined through the properties
+Therefore, a measure is simply a set of operators that is able to describe the probability of having a certain outcome from an experiment. Therefore, in general we can have $\Pi_n$ to be whatever type of operator with restrictions only on how it acts onto the states. Nevertheless, it's easy to understand that from the definition of measure another restriction on their form needs to be done. In particular, we can use the properties of probability to see how the following needs to be true
 \begin{align}
-    \label{eq:ProjDef}
-    &\hat{P}^\dagger = \hat{P}, & \hat{P}^2 = \hat{P},
+    &\sum_n p_n = \sum_n \ev{\hat{\Pi}^\dagger_n\hat{\Pi}_n}{\psi} = 1, & \forall \ket{\psi} \in \mathcal{H}.
 \end{align}
-and it's possible to see that the set of all $\ket{\phi}$ obtained from applying $\hat{P}$ to a state $\ket{\psi}$ of the system forms a subspace of $\mathcal{H}$. Basically applying $\hat{P}$ to a state project them into that subspace, having that the property 2 can be satisfied by using $\hat{P}_n$ of the $\lambda_n$ eigenspaces. Instead, to respect the first requisite we need to have another property that comes from a basic rule of probability that is $\sum_n p_n = 1$, therefore the following must be true
+It's easy to understand that this condition can be translated to a condition on the set of operators per se, requiring that the following is true in order to have a proper measure
 \begin{equation}
-    \label{eq:completeCondition}
-    \sum_n \hat{P}^\dagger_n\hat{P}_n = \mathbb{1}.
+    \label{eq:MeasureCompleteCondition}
+    \sum_n \Pi_n^\dagger \Pi_n = \mathbb{1}.
 \end{equation}
-This condition is not a problem for projector operators since it's always possible once you have a non-complete set $\{ \hat{P}_n \}_{n\in \mathcal{I}}$ of projectors to find out a $\hat{P}'$ that inserted inside it make  it complete respecting \eqref{eq:completeCondition}.
+A condition that we will need to keep in mind when we will need to create a measure further in the course.
 
-We have basically seen that to predict an experimental result we should construct a peculiar set of complete projector operators related somehow to the physical quantity that we are interested in measuring. This may seem really complex to the inexpert reader, nevertheless we shall discuss how in reality it's easier than we can imagine. The reason is that physical quantities in QM are represented by linear operators that we assume to be self-adjoint, since we need for the eigenvalues to real giving us the possible experimental outcomes, and measuring a complex quantity would be non-physical. Therefore, let's imagine having a quantity $\hat{A}$, being self-adjoint we know from \textbf{spectral theorem} that an orthonormal base of eigenstate $\{ \ket{\psi_n} \}_{n\in \mathcal{I}}$ exist for $\mathcal{H}$, and so the following relations hold true
-\begin{align}
-    &\hat{A} = \sum_n \lambda_n\ketbra{\psi_n}{\psi_n}, &\mathbb{1} = \sum_n\ketbra{\psi_n}{\psi_n}.
-\end{align}
-Now, I will let to the reader to demonstrate that by defining $\hat{\Pi}_n = \ketbra{\psi_n}{\psi_n}$ the set of all operators forms a complete projector one that satisfy both \eqref{eq:ProjDef} and \eqref{eq:completeCondition}. Also, it's fairly easy to understand that it satisfy the condition for being a measure having the probability of measuring a certain outcome to be
-\begin{align}
-    p_n = \ev{\hat{\Pi}^\dagger_n\hat{\Pi}_n}{\psi} = \abs{\braket{\psi}{\psi_n}}^2,
-\end{align}
-which equals the modulus square the coefficient respect to $\ket{\psi_n}$ in the expansion of $\ket{\psi}$ onto the orthonormal eigenstate base. Then, it's also easy to see that also the collapse condition it's respected since
+Using this definition the reader can understand how in QM I really can't know which value $\lambda_n$ of a certain quantity the experiment will give in output, but only the probability of having it. This may arise the question to the reader of how we can predict something out of this theory if we can't know the final outcome. The answer is that, it's true, no single outcome can be predicted exactly, but the average quantity can be estimated without any problem. In fact, we can simply use the mathematical definition of average to see that
 \begin{equation}
-    \ket{\psi_n} = \frac{\hat{\Pi}_n\ket{\psi}}{\sqrt{\ev{\hat{\Pi}^\dagger_n\hat{\Pi}_n}{\psi}}} = \frac{\braket{\psi}{\psi_n}}{\abs{\braket{\psi}{\psi_n}}}\ket{\psi_n} = e^{i\theta}\ket{\psi_n},
+    \left\langle \Lambda \right\rangle = \sum_n \lambda_np_n = \sum_n \lambda_n\ev{\hat{\Pi}^\dagger_n\hat{\Pi}_n}{\psi}.
 \end{equation}
-and since a phase doesn't vary the physical state of the system we effectively have an eigenstate of $\lambda_n$ upon collapse. This particularly simple measure it's called \textbf{projection valued measurement} or PVM, and it's the main way in which we can think of physical measurement but not the only one, in fact we will see also other types of more general measures.
-
-As a last remark on this topic I would like to talk about the measure for a qubit system of which we already know the orthonormal base used as the computational base in the PVM. We can see how the projectors defined are $\hat{P}_1 = \ketbra{1}$ and $\hat{P}_0 = \ketbra{0}$, we can set the eigenvalues for the two to be $\lambda_0 = 1$ and $\lambda_1 = 1$ to then see how the quantity that we are measuring is
+Which shows how the average observable for a state $\ket{\psi}$ is a totally deterministic quantity. From this expression we can also see how different states can give also the same average, in fact it's easy to see how for $\ket{\psi'} = \exp(i\theta)\ket{\psi}$ with $\theta \in \mathbb{R}$ leads to
 \begin{equation}
-    \hat{A} = \ketbra{0} - \ketbra{1} = \begin{pmatrix}
-        1 & 0\\
-        0 & -1
-    \end{pmatrix}.
+    \left\langle \Lambda' \right\rangle = \abs{e^{i\theta}}^2\sum_n \lambda_n\ev{\hat{\Pi}^\dagger_n\hat{\Pi}_n}{\psi} = \sum_n \lambda_n\ev{\hat{\Pi}^\dagger_n\hat{\Pi}_n}{\psi} = \left\langle \Lambda \right\rangle.
 \end{equation}
-Where the $\mathbb{C}^2$ representation of the states has been used, giving out the known form of the $Z$ Pauli matrix. We are so measuring if the state of the system is up or down inside the Block sphere, nevertheless we can also try to measure if it's in the right or left direction on the $x$ axis for example. To do that we shall use the right base to make computations on, that will point in the right direction and using the right rotation one can find out that the right one is $\ket{\pm} = (\ket{0} + \ket{1})/\sqrt{2}$. Therefore, taking a state $\ket{\psi} = a\ket{+} + b\ket{-}$ we want to measure the coefficients $a$ and $b$ of probability of being in the right or left directions, but still using the computational basis since in practice experimental setup are usually only able to measure using $Z$. Therefore, to do that we can simply do the following
-\begin{equation}
-    a\ket{+} + b\ket{-} = a\frac{1}{\sqrt{2}}\begin{pmatrix}
-        1\\
-        1
-    \end{pmatrix} + b \frac{1}{\sqrt{2}}\begin{pmatrix}
-        1\\
-        -1
-    \end{pmatrix} = a \frac{1}{\sqrt{2}}\begin{pmatrix}
-        1 & 1\\
-        1 & -1
-    \end{pmatrix}\begin{pmatrix}
-        1\\
-        0
-    \end{pmatrix} + b\frac{1}{\sqrt{2}}\begin{pmatrix}
-        1 & 1\\
-        1 & -1
-    \end{pmatrix}\begin{pmatrix}
-        0\\
-        1
-    \end{pmatrix} = H\left( a\ket{0} + b\ket{1} \right).
-\end{equation}
-Basically we have found out how the state can be written in the computational base using a simple rotation, which in this case is a known one called \textbf{Hadamart gate}, therefore to measure the coefficients using the computational base we shall only need to rotate the states using the right inverse transformation and then take the measure. A reasoning that can be applied to every possible other base, not only $\ket{\pm}$.
-
-\nt
-{
-    Was sad with the first postulate how we would have seen how complex phases does not contribute into the evaluation of the physical quantities and therefore $\exp(i\theta)\ket{\psi} \sim \ket{\psi}$. To see that we can simply think about averages, meaning that the real outcome of an experiment will not really be $\lambda_n$ obtained from a single evaluation but an average of all those outcomes taken over a series of runs, as
-    \begin{equation}
-        \left\langle A \right\rangle = \sum_n p_n \lambda_n = \ev{\hat{A}}{\psi},
-    \end{equation}
-    in the PVM measure. Therefore, it's easy to see how adding a phase will simply change it of a factor $\abs{\exp(i\theta)} = 1$, leaving it as it is giving the same physical state.
-}
+This means that basically a system in state $\ket{\psi}$ or $\ket{\psi'}$ have same observable and, therefore, are indistinguishable giving us the reason why in the definition of the first postulate we have sad that no difference is present between states that differ only by a complex phase.
