@@ -3,3 +3,4 @@ qubit
 qubits
 diagonalyzed
 eigenstates
+reconduce
