@@ -175,10 +175,68 @@ This result is telling is that doesn't matter with measure we are using we can a
 
 \subsection{Measurements and circuits}
 
-Measuring is an important feature inside a quantum circuits since at the end of the manipulations we also need to know the result of the operations contained in the qubits states. In general, we are going to see how the measurement works inside a quantum circuit and their properties. First, we shall keep in mind that usually all the quantum computers are able to perform measurements mainly in the computational basis, meaning of the observable $Z$. This is due to a matter of experimental convenience, but lead us to try to reconduce every possible measure to that one.
+Measuring is an important feature inside a quantum circuits since at the end of the manipulations we also need to know the result of the operations contained in the qubits states. In general, we are going to see how the measurement works inside a quantum circuit and their properties. First, we shall keep in mind that usually all the quantum computers are able to perform measurements mainly in the computational basis, meaning of the observable $Z$. This is due to a matter of experimental convenience, but lead us to try to reconduce every possible measure to that one. For example, we may work for a complex quantum circuit in a base like $\ket{\pm}$ so that a state is given by
+\begin{equation}
+    \ket{\psi} = a\ket{+} + b\ket{-},
+\end{equation}
+but we can't use the measure given in that base since the QC only measure in computational base. The answer to this problem is in reality incredibly simple, and we can state it really quickly as
+\thm{Base change}
+{
+    Let's imagine having a circuit that prepare a qubit state $\ket{\psi}$ described on an orthonormal base $\ket{e_1}$ and $\ket{e_2}$. The measurement of the state can be performed still on the computational base without losing information by applying an appropriate rotation before the measure.
+}
+\pf{Proof}
+{
+    Let $\mathcal{U}$ be the unitary transformation that acts as follows
+    \begin{align}
+        &\mathcal{U}\ket{e_1} = \ket{0}, &\mathcal{U}\ket{e_2} = \ket{1},
+    \end{align}
+    we can easily see how the state $\ket{\psi}$ can be written in a really simple way by using the following reasoning
+    \begin{equation}
+        \ket{\psi} = a\ket{e_1} + b\ket{e_2} = \mathcal{U}\left( a\ket{0} + b\ket{1} \right).
+    \end{equation}
+    Meaning that the state $\mathcal{U}^\dagger\ket{\psi}$ will be a state written in the computational base with the same coefficients, therefore measuring it gives out the same probabilities of before we don't lose any informations.
+}
+\noindent
+This little result is really helpful in practice, since basically means that we can perform a measurament using the same base in every possible situation by using circuit like in \figref{fig:Measure}.
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Immagini/Measure.pdf}
+    \caption{Simple quantum circuit for the measure of a qubit in a general base, composed by a rotation and the measure.}
+    \label{fig:Measure}
+\end{figure}
+Where we can see how the measure is represented by the symbol with the arrow which take a quantum state and returns the outcome of the measure on a classical bit $1$ or $0$, seen as the double line.
 
 % TODO: Qua devi fare l'esempio di come si misura uno stato anche se è descritto in termini di un'altra base facendo le rotazioni, qui ci può stare un disegno in modo tare da introdurre la notazione che non sarebbe affatto male, anche per la notazione del bit classico.
 
 % TODO: Devi metterci il principio del "lo puoi mettere dove cazzo ti pare" e del "misura implicita"
 
 % TODO: Controllo classico o controllo quantistico, ma lo puoi infilare anche dentro al principio del, lo puoi mettere dove cazzo ti pare("anzi, fai l'esempio con quello così te lo levi subito")
+
+The other important thing that we can say about measure inside circuits is that they can be applied in every point of the circuit and the final result of the computation will not change. To understand this we shall make an example using control gates as depicted in \figref{fig:ControlEquivalence}.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{Immagini/ControlEquivalence.pdf}
+    \caption
+    {
+        Representation of two equivalent circuits that uses classical and quantum control to apply an operation to the second qubit. In the first case the measurement on the first qubit is done before the control while in the other is done after, still the result will not change having that if the bit is $1$ the operation is applied, while if is $0$ will remain untouched.
+    }
+    \label{fig:ControlEquivalence}
+\end{figure}
+We can see how the two circuits differ based on where the measurement is placed in the circuit. Nevertheless, if we analyze the system we can simply see how the outcome of the state $\ket{\phi}$ will be the same based on the value of the measurement. In fact, take the first circuit: the outcomes were
+\begin{equation}
+    \ket{\phi}, \hspace{0.5cm} \text{if }c=1; \hspace{2cm} \mathcal{U}\ket{\phi}, \hspace{0.5cm} \text{if }c=0,
+\end{equation}
+where $c$ represent the value of the bit. Now, if we take the second one, it's easy to see that if the measure gives $1$ meant that the that $\ket{\psi}$ had a component along $\ket{1}$ passing through the control so that the rotation was applied to $\ket{\phi}$. Instead, if the value was $0$ the opposite happens having so that the outcome at the end will be the exact same. This property of measurement takes the name of \textbf{principle of deferred measurement}, and allow us to place the measurement procedure always at the end of our circuits without the worries of modifying the outcome of the algorithm.
+\wc{Attention}
+{
+    The deferred measurement principle it's not based on a mathematical result, since for it work in a general case we shall need that the measure operator $\hat{\Pi}_m$ commute with every possible gate $\mathcal{U}$. In this way we would have that
+    \begin{equation}
+        \hat{\Pi}_m\mathcal{U}\ket{\psi} = \mathcal{U}\hat{\Pi}_m \ket{\psi},
+    \end{equation}
+    which means that the final state at the end of the circuit remains the same. Nevertheless, it's easy to find a counter example by using $\mathcal{U} = X$ and $\hat{\Pi}_m = \ketbra{1}$, meaning that in general may exist a situation where the final outcome changes. Still, the principle could still hold since our aim is not really find out the exact value of the final state, but to understand it by using a single measure and the connection between the probabilities of certain outcomes and possible prepared states. Therefore, even if mathematically the result can be different physically specking the result is the same.
+}
+
+\nt
+{
+    It's possible to find that in several circuits the final measures are not explicitly written or are written only on certain qubit, that is because only the necessary measurements to understand the states of the qubits are shown, the non-necessary ones are skipped. This idea is also called \textbf{principle of implicit measurements} and will be more clear as we will talk about entanglement.
+}
