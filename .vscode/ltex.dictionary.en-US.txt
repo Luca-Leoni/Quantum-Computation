@@ -4,3 +4,4 @@ qubits
 diagonalyzed
 eigenstates
 reconduce
+CNOT
