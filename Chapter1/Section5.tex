@@ -88,3 +88,38 @@ while here the starting states have been measured by Alice, meaning that they ha
     \mathcal{U}(\ket{\psi}\otimes\ket{Q_1}\otimes\ket{Q_2}) = \ket{00}\otimes\ket{\psi}.
 \end{equation}
 Where $\ket{00}$ is only one of the four possible final result obtained. Another apparent contradiction that can be found out inside the teleportation protocol is the fact that \textbf{information seem to pass from one qubit to another faster than the speed of light}. That can't obviously be possible, since relativity forbid it, and in fact that is not the case. The two classical controls that are used inside the circuit solve the problem since in order to obtain the copied state inside $Q_2$ I first need Alice to transmit the result of the measurements to Bob and that classical exchange of information take times.
+
+\subsection{EPR paradox and Bell's inequality}
+
+Since in 2022, the year I'm writing these notes, the Nobel Prize in physics was awarded to Alain Specter, John Clauser and Anton Zeilinger for their experiments on entangled photons, a little part of the course was devoted to the description of the theory they allowed to uncover. To understand it we shall understand that in the first half of 1900 the idea of entanglement was difficult to accept. Especially Einstein was really skeptical about it since at first sight looked like a threat to its restricted relativity with information apparently traveling faster than light. Remained in history Einstein's definition of entanglement as "spooky action at a distance", showing how much he hated it. In this context, great work was putted by Einstein and others physicist in order to see if effectively QM was wrong or, better, not entirely right, meaning that we were still missing something to understand it at its fullest.
+
+In 1935 Einstein, Podolsky and Rosen (EPR) delineated a theory trying to show that QM was indeed not complete, starting by defining what it means for a physical theory to be complete. The line of reasoning starts with the definition of the so-called elements of reality.
+\dfn{Elements of reality}
+{
+    A quantity is called element of reality if it has a value that can be predicted before experiment, basically it's already perfectly known already before taking the measure. A property of this type, for logic, must be owned by the system regardless of what you are making so that exist also before taking the measurement with a precise value.
+}
+\noindent
+This definition is purely based on logic, assuming that if I'm able to know the exact outcome of an experiment before taking the measure then the property that I'm measuring needs to have that value defined intrinsically inside it. Then, the next move is to use this definition to define when a theory is complete.
+\dfn{Complete theory}
+{
+    A physical theory is complete if it contains all elements of reality.
+}
+\noindent
+Using these two definitions, the three theoreticians demonstrated that QM is not complete if we assume the notion of locality. Where, locality was also defined by them as follows.
+\dfn{Locality}
+{
+    Measurements are independent if done in position and time that are not causally related.
+}
+\noindent
+With this they were able to create a thought experiment that demonstrated how some elements of reality were missing inside QM. The experiment that E. P. R. proposed is actually old, today the best way to understand this is by looking at the one proposed by David Bohm in 1951 which shows how spin is what is missing.
+\thm{Incompleteness of QM}
+{
+    Spin is an element of reality that is not contained entirely inside quantum mechanics.
+}
+\pf{Proof}
+{
+    We can imagine taking a singlet state of spin which is given by the following Bell state
+    \begin{equation}
+        \ket{\phi^-} = \frac{\ket{\uparrow\downarrow} - \ket{\downarrow\uparrow}}{\sqrt{2}}.
+    \end{equation}
+}
