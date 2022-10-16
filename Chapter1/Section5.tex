@@ -122,4 +122,50 @@ With this they were able to create a thought experiment that demonstrated how so
     \begin{equation}
         \ket{\phi^-} = \frac{\ket{\uparrow\downarrow} - \ket{\downarrow\uparrow}}{\sqrt{2}}.
     \end{equation}
+    This state is a peculiar one, since it's possible to demonstrate that has the same form in every possible base. Meaning that if I change the base of representation to an orthonormal couple $\{ \ket{e_1}, \ket{e_2} \}$ the state become
+    \begin{equation}
+        \ket{\phi^-} = \frac{\ket{e_1e_2} - \ket{e_2e_1}}{\sqrt{2}}.
+    \end{equation}
+    Thus, if one measures the spin of the system in any direction, so using the right base, the same result will be found out meaning that the spin is an element of reality with a defined value. Nevertheless, in QM we know that the spin operators do not commute, meaning that we can't know both components of the spin at the same time. Basically, even if the whole spin vector is an element of reality quantum mechanics only allows for the partial knowledge of it, meaning that QM does not contain all elements of reality.
 }
+\noindent
+This result showed, in the minds of Einstein and collegues, that the QM is not a complete theory needing still work to find out certain \textbf{hidden variables} whose treated statistically will recreate quanutm mechanics but used normaly will give deterministic results. Basically he was searching for the equivalent of classical mechanics starting from statistical mechanics, where now statistical mechanics is quantum mechanics itself.
+
+This discussion was incredibly interesting at the time, but understanding what the hidden variables were remained more of a phylisofic question for a lot of times untill the idea of Bell. In 1964, he pusblished a paper showing how whatever deterministic real local theory using hidden variables is doomed to fail in reproducing the quantum mechanical result using the following reasoning. He focused his studies on a particualar observable defined using four different ones $Q, S, R$ and $T$, where all of them could only have two possible outcomes $\pm 1$. The observable that we are interested in is the following
+\begin{equation}
+    \mathcal{L} = QS + RS + RT - QT,
+\end{equation}
+which posses some interesting properties such as it can have only two possible outcomes $\pm 2$. Bell showed that inside a local real deterministic theory the following result must hold.
+\thm{Bell's inequality}
+{
+    Assuming locality and reality of the four observable composing $\mathcal{L}$ we have that the following relation hold
+    \begin{equation}
+        \left\langle \mathcal{L} \right\rangle \le 2.
+    \end{equation}
+}
+\pf{Proof}
+{
+    We will assume that the four observables will be evaluated separetedly in four different measurements, having so that every draw forms the outcome $(q, r, s, t)$ with a probability $P(q, r, s, t)$.  We can so see how the following relation is true since we will have
+    \begin{equation}
+        \left\langle \mathcal{L} \right\rangle = \sum_{qsrt}(qs + rs + rt - qt)P(q, r, s, t) \le 2\sum_{qrst} P(q, r, s, t),
+    \end{equation}
+    but the sum of the probability of all possible outcomes need to be normalized at $1$ having so that the wanted relation holds.
+}
+
+\noindent
+This result allowed to set a condition for the existence of the local hidden variables, the only thing remained to do is to show that quantum mechanics do not respect it. We can so take the following example 
+\begin{align}
+    &Q=Z_1, &S=-\frac{Z_2 + X_2}{\sqrt{2}},\\
+    &R=X_1, &T=\frac{Z_2 - X_2}{\sqrt{2}},
+\end{align}
+and evaluate the average of $\mathcal{L}$ in the singlet state. From locality, we can say that no correlation exist from the outcomes of the different measurements, so that their probability are independent of each other having
+\begin{equation}
+    P(q, r, s, t) = P(q)P(r)P(s)P(t).
+\end{equation}
+Meaning that the following is true
+\begin{equation}
+    \ev{\mathcal{L}}{\phi^-} = \left\langle QR \right\rangle + \left\langle RS \right\rangle + \left\langle RT \right\rangle - \left\langle QT \right\rangle = 2\sqrt{2} > 2.
+\end{equation}
+Meaning that QM doesn't respect Bell's inequality and so can't be reconstructed using local hidden variables. This line of reasoning was also proven experimentally by Cluaser first, and then also by Specter with a more refined experiment that reproduced accuratelly the $2\sqrt{2}$ result using photons and not spins. Therefore, local hidden variables will not be the answer to find out a deterministic quantum theory.
+
+From that point on quantum information evolved a lot with the creation of quantum optics and entangled photons, in particualar the last part of the Nobel Prize was given to Zellinger sicne was the first to perform quantum teleportation in open air at a far distance in Vienna. He teleported a state using entangled photons from one part to the other of the Danube river.
