@@ -198,3 +198,134 @@ is the decimal number $b < \phi_n$ closer to it as possible. Therefore, we are g
 }
 \noindent
 Therefore, this algorithm is able to give us a really greate approximation for the phase that increase in accuracy as we scale up the number of qubit used in order to perform the operation. Also, it's possible to see how we from the inequality we can actually controll also the accuracy and precision of the prediction by setting them prior and then choose $t$ in order to satisfy \eqref{eq:PhaseEvaluation}.
+
+\subsection{Grover algorithm}
+
+Search algorithm are one of the most important type of algorithm that exist, since the aim is to find out specific elements inside a set that satisfy some requirements defined by ceratin function $f(x)$. Normally this kind of algorithms are really expensive scaling up real quick with both dimensions of the set and complexity of the function to use, but inside a quantum computer we can try to create a really efficient version of them.
+
+Let's imagine to work with $n$ qubits, so that the computational base is composed by $N = 2^n$ elements that compose our set $\mathcal{N}$ in which only $1 \le M \le N$ elements are solutions of $f(x)$. Where, being solutions means that the state $\ket{x}$\footnote{We are using the binary representation for the state of the computational basis.} that represent that element is so that
+\begin{equation}
+    f(x) = \begin{cases}
+        1 & x \in \text{solution}\\
+        0 & x \notin \text{solution}
+    \end{cases},
+\end{equation}
+basically $f: \mathcal{S} \to \{0, 1\}$ is a boolean function that gives true if it's solution and false otherwise. Then, we are going to need two types of gates that will generate the building blocks of our algorithm.
+\thm{Oracle gate}
+{
+    The circuit shown in \figref{fig:oracle} is called oracle and is able to perform an inversion of the states that are not solution by using an ausiliary qubit in the $\ket{1}$ state.
+    \begin{equation}
+        \mathcal{O}\ket{x} = (-1)^{f(x)}\ket{x},
+    \end{equation}
+    so that if $\ket{x}$ is solution a $-1$ pops up, and remains equal otherwise.
+}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Immagini/Oracle.pdf}
+    \caption
+    {
+        Quantum circuit for the oracle gate used inside the algorithm to perform an inversion of the state about the components that are not solution to the function that we are interested in.
+    }
+    \label{fig:oracle}
+\end{figure}
+\pf{Proof}
+{
+    We can simply go over the different steps of the circuit to see how the following happens to the state
+    \begin{equation}
+        \mathcal{U}\left( \mathbb{1}\otimes H \right)\ket{x}\otimes\ket{1} = \mathcal{U}\ket{x}\otimes\left( \frac{\ket{0} - \ket{1}}{\sqrt{2}} \right) = \ket{x}\otimes\frac{1}{\sqrt{2}}\begin{cases}
+            \ket{0} - \ket{1} & x \in \mathcal{S},\\
+            \ket{1} - \ket{0} & x \in \mathcal{E}
+        \end{cases}.
+    \end{equation}
+    Where $\mathcal{S}$ and $\mathcal{E}$ are the subset of $\mathcal{N}$ that contains the states that are solutions and not, respectivelly. Now, we can see how the difference between the two is simply a minus sign that we can imagine factorizing so that $\ket{x}$ takes it changing its phase as wanted.
+}
+\noindent
+The next step is to define another type of gate that will be needed to perform another, more complex, type of reflection about the average state. Such gate is actually defined through also the use of a \textbf{conditional phase operator} defined as
+\begin{equation}
+    \mathcal{U}_x = 2\ketbra{x} - \mathbb{1},
+\end{equation}
+which has the effect of changing the phase to all state in the base that are not $\ket{x}$, and it's really easy to see since
+\begin{align}
+    &\mathcal{U}_x\ket{k} = \begin{cases}
+        \ket{k} & k = x,\\
+        -\ket{k} & k \neq x
+    \end{cases}.
+\end{align}
+Using this idea we can define the wanted inversion operator in this particular way.
+\thm{Inversion about the average}
+{
+    We can define the inversion about the average operator inside the space $\mathcal{N}$ as $\tilde{\mathcal{U}} = H^{\otimes n}\mathcal{U}_0 H^{\otimes n}$ and see how it's effect on a general state is
+    \begin{align}
+        &\ket{\phi} = \sum_{k\in\mathcal{N}}\alpha_k\ket{k}, &\tilde{\mathcal{U}}\ket{\phi} = \sum_{k\in\mathcal{N}}\left( 2\mean{\alpha} - \alpha_k \right) \ket{k}.
+    \end{align}
+    Which defines an inversion about the average state $\mean{\alpha}$.
+}
+\pf{Proof}
+{
+    We can first have a look at the form of the operator itself, which can be rewritten in a compact way as follows
+    \begin{align}
+        &\tilde{\mathcal{U}} = 2H^{\otimes n}\ketbra{0}H^{\otimes n} -\mathbb{1} = 2\ketbra{\psi} - \mathbb{1}, &\ket{\psi} = \frac{1}{\sqrt{N}}\sum_{k\in \mathcal{N}} \ket{k}.
+    \end{align}
+    Then, we can apply it to a general state to see how we retain the wanted result. In particular, we are going to write that
+    \begin{align}
+        &\tilde{\mathcal{U}}\sum_{k\in\mathcal{N}}\alpha_k\ket{k} = 2\sum_{k\in\mathcal{N}}\alpha_k\braket{\psi}{k}\ket{\psi} - \sum_{k\in\mathcal{N}}\alpha_k\ket{k} = 2\sum_{k\in\mathcal{N}}\sum_{l\in\mathcal{N}}\sum_{x\in\mathcal{N}}\frac{\alpha_k}{N} \braket{l}{k}\ket{x} - \sum_{k\in\mathcal{N}}\alpha_k\ket{k},
+    \end{align}
+    where we can use the fact that $\braket{l}{k} = \delta_{lk}$ to eliminate a summation and then see how $\sum_{k\in\mathcal{N}}\alpha_k/N = \mean{\alpha}$ so that the final result is obtained as
+    \begin{equation}
+        \tilde{\mathcal{U}}\sum_{k\in\mathcal{N}}\alpha_k\ket{k} = 2\sum_{x\in\mathcal{N}}\mean{\alpha}\ket{x} - \sum_{k\in\mathcal{N}}\alpha_k\ket{k} = \sum_{k\in\mathcal{N}}\left( 2\mean{\alpha} - \alpha_k \right) \ket{k}.
+    \end{equation}
+}
+
+These two gates are the building blocks that will allow us to perform the quantum search and the idea to that is to actually define an operator that will allow us to transform the state into a linear combination of the ones that are solutions to our function. This can be done easily, since the following result holds, giving us the final form for the quantum search algorithm.
+\thm{Quantum search}
+{
+    A general state $H^{\otimes n}\ket{0}$ can be decomposed in two main parts inside $\mathcal{N}$ as
+    \begin{equation}
+        \ket{\psi} = H^{\otimes n}\ket{0} = \sin\frac{\theta}{2}\ket{\beta} + \cos\frac{\theta}{2}\ket{\alpha},
+    \end{equation}
+    where $\ket{\beta}$ is a linear combination of all the solutions of $f(x)$, while $\ket{\alpha}$ a combination of all the non-solutions. The \textbf{Groover opeartor} $\mathcal{G} = \tilde{\mathcal{U}}\mathcal{O}$ acts on this state by rotating the angle $\theta$ in the direction of $\ket{\beta}$, so that if applied $R$ times we get
+    \begin{equation}
+        \mathcal{G}^R\ket{\psi} = \sin\left( \frac{2R + 1}{2}\theta \right)\ket{\beta} + \cos\left( \frac{2R + 1}{2}\theta \right)\ket{\alpha}.
+    \end{equation}
+    Therefore, we can select the right number of $\mathcal{G}$ to perform in order to obtain the maximum likelihood to obtain as a result of the measurament the state $\ket{\beta}$ with the solutions of the function.
+}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Immagini/Groover.pdf}
+    \includegraphics[width=0.25\textwidth]{Immagini/TrasfGrov.pdf}
+    \caption
+    {
+        Graphical representation of the Groover's circuit, to the left, with transformations that happens to the state in the quantum search algorithm, to the right, in order to understand how the two reflection tranforms into a rotation.
+    }
+    \label{fig:Groover}
+\end{figure}
+\pf{Proof}
+{
+    We can start by looking at the general state $\ket{\psi}$ and see how can be rewritten as linear combination of solution and non-solution as follows
+    \begin{equation}
+        \ket{\psi} = \frac{1}{\sqrt{N}}\left( \sum_{k\in \mathcal{S}}\ket{k} + \sum_{k\in\mathcal{E}}\ket{k} \right) = \sqrt{\frac{M}{N}}\left( \frac{1}{\sqrt{M}}\sum_{k\in \mathcal{S}}\ket{k} \right) + \sqrt{\frac{N-M}{N}}\left( \frac{1}{\sqrt{N-M}}\sum_{k\in \mathcal{E}}\ket{k} \right),
+    \end{equation}
+    now we can see how $\sqrt{M/N}$ and $\sqrt{N-M/N}$ can be setted as the sine and cosine, while the superpositions that are mulitpling are exactly the linear combinations of all solutions and non-solutions respectivelly. Therefore, we effectivelly have that the following is true
+    \begin{align}
+        H^{\otimes n}\ket{0} = \sin\frac{\theta}{2}\ket{\beta} + \cos\frac{\theta}{2}\ket{\alpha},
+    \end{align}
+    then we shall see what the operator $\mathcal{G}$ does on it, and that can be done by looking at $\mathcal{O}$ and $\tilde{\mathcal{U}}$ separatelly. First, it's easy to understand how the oracle gate simply changes the sign of the $\ket{\beta}$ coefficient, meaning that using it simply performs a reflection of the state respec to the $\ket{\alpha}$ one. Then, the inversion by the average operator instead perform another inversion in this case that is respect to the state $\ket{\psi}$, so that two inversions apply one after giving a final rotation of the state as
+    \begin{equation}
+        \mathcal{G}\ket{\psi} = \sin\left( \frac{3}{2}\theta \right)\ket{\beta} + \cos\left( \frac{3}{2}\theta \right)\ket{\alpha},
+    \end{equation}
+    which is also depicted in \figref{fig:Groover}. Meaning that the rotation allowed for the state to become closer to the $\ket{\beta}$ state, and if we continue to perform it we will get as a state
+    \begin{equation}
+        \mathcal{G}^R\ket{\psi} = \sin\left( \frac{2R + 1}{2}\theta \right)\ket{\beta} + \cos\left( \frac{2R + 1}{2}\theta \right)\ket{\alpha}.
+    \end{equation}
+    In this way we can see how the probabilities of having as result $\ket{\beta}$ scales up since the angle gets closer to $\pi/2$, which gives $1$ as coefficient for that state. Still, it's possible to do too many rotations and ending up to go past the perfect value and increasing the coefficients for the $\ket{\alpha}$ state, still one can see how if $R$ is choosen as
+    \begin{align}
+        &R = \left[ \frac{\arccos\sqrt{M/N}}{\phi} \right], &\phi \le 4,
+    \end{align}
+    where $\left[ x \right]$ is the integer part function, we will have probabilities that looks like
+    \begin{align}
+        &P_\beta > 1/2, &P_\alpha < 1/2.
+    \end{align}
+    Basically, we can select $\phi$ to obtain the most optimized result possible, and already we know that by default the probabilities are in favor of the right result that we are serching for.
+}
+\noindent
+Therefore, this algorithm allows us to search inside a set of states of dimensions $2^n$ the ones that satisfy the condition imposed by a wanted function $f$. Also, all of this is done by using a minimal number of operations that scales linearly with the number of qubit that we are using, beating in an increadible way the classical search algorithm that scales exponentially.
