@@ -1,0 +1,199 @@
+\section{Universality of quantum computation}
+
+An important property that we want to obtain inside ours computer is the universality of the logic we are using. Meaning that we aim in being able to represent all the possible function using only a restricted number of operations in order to implement only those inside our machine, making the implementation much easier. In order to demonstrate it inside quantum computers we need first to make this concept more formal, aiming so to a definition like the following.
+\dfn{Universality}
+{
+    A type of computation is universal if exist a small set of gates that can be used to write any algorithm.
+}
+\noindent
+We know how classical computations have such properties since it's possible to demonstrate how all the ingredients that are needed to compose every circuit are the following:
+\begin{enumerate}[label*=\protect\fbox{\arabic{enumi}}]
+    \item Wires, connecting different gates conserving states;
+    \item Ancilla bits, in order to do more complex operations;
+    \item FANOUT to duplicate the state of a bit;
+    \item CROSSOVER swapping states between bits;
+    \item AND, XOR and NOT gates able to generate all the others.
+\end{enumerate}
+It's also possible to use only the NAND gate to similate all of AND, XOR and NOT being the universal gate of classical logic.
+
+What we want to do is see how the following components are also what we need inside quantum computations to be universal, and components from 1 to 4 are already given to us by discussions in precedent sections. Therefore, all remains is to see if exist a set of gates that allow us to write down all possible unitary operations doable on a set of qubit.
+
+\subsection{Gates decomposition}
+
+To see how to recreate universality we need to see if a general gate $\mathcal{U}$ acting on $n$ qubit, so a general $2^n\times 2^n$ unitary matrix, can be decomposed in several similar operations. This is duable using the concept of two-level gate defined as.
+\dfn{Two-level gates}
+{
+    A gate is defined to be two-level if leaves invariant $2^n - 2$ states and modify in a non-trivial way the remaining two. Basically, acts only on two specific states.
+}
+\noindent
+Using such gates we can write down all possible unitary matrices and this can be seen in the following result
+\thm{Two-level universality}
+{
+    Every unitary matrix $\mathcal{U}$ with dimension $d\times d$ can be decomposed using at most $\mathcal{O}(2^{2n})$ two-level gates.
+}
+\pf{Proof}
+{
+    We haven't really seen a rigourus proof of such a statement we have only worked out the case with $d = 3$. Let $\mathcal{U}$ be a generally $3\times 3$ unitary matrix as
+    \begin{equation}
+        \mathcal{U} = \begin{pmatrix}
+            a & b & c\\
+            d & e & f\\
+            g & h & i
+        \end{pmatrix},
+    \end{equation}
+    we can choose some two-level opeartions to perform depending on its values. In particular, we choose
+    \begin{align}
+        &\text{if }d=0 \hspace{0.5cm}\mathcal{U}_1 = \begin{pmatrix}
+            1 & 0 & 0\\
+            0 & 1 & 0\\
+            0 & 0 & 1
+        \end{pmatrix}, &\text{if }d\neq 0 \hspace{0.5cm}\mathcal{U}_1 =\begin{pmatrix}
+            \frac{a^*}{\sqrt{\abs{a}^2 + \abs{b}^2}} & \frac{b^*}{\sqrt{\abs{a}^2 + \abs{b}^2}} & 0\\
+            \frac{b}{\sqrt{\abs{a}^2 + \abs{b}^2}} & -\frac{a}{\sqrt{\abs{a}^2 + \abs{b}^2}} & 0\\
+            0 & 0 & 1
+        \end{pmatrix}.
+    \end{align}
+    In this way it's possible to see how mutipling the two unitary matrices one can obtain the following result
+    \begin{equation}
+        \mathcal{U}_1\mathcal{U} = \begin{pmatrix}
+            a' & b' & c'\\
+            0 & e' & f'\\
+            g' & h' & i'
+        \end{pmatrix},
+    \end{equation}
+    an element of the matrix was setted to $0$. We can then go on and use another transformation in a way similar to the one before as
+    \begin{align}
+        &\text{if }c'=0 \hspace{0.5cm}\mathcal{U}_2 = \begin{pmatrix}
+            a'^* & 0 & 0\\
+            0 & 1 & 0\\
+            0 & 0 & 1
+        \end{pmatrix}, &\text{if }c'\neq 0 \hspace{0.5cm}\mathcal{U}_2 =\begin{pmatrix}
+            \frac{a'^*}{\sqrt{\abs{a'}^2 + \abs{c'}^2}} & 0 & \frac{c'^*}{\sqrt{\abs{a'}^2 + \abs{c'}^2}}\\
+            0 & 1 & 0\\
+            \frac{c'}{\sqrt{\abs{a'}^2 + \abs{c'}^2}} & 0 & -\frac{a'}{\sqrt{\abs{a'}^2 + \abs{c'}^2}}
+        \end{pmatrix}.
+    \end{align}
+    Applied it we can see how the matrix simply further becoming simply
+    \begin{equation}
+        \mathcal{U}_2\mathcal{U}_1\mathcal{U} = \begin{pmatrix}
+            1 & b'' & c''\\
+            0 & e'' & f''\\
+            0 & h'' & i''
+        \end{pmatrix},
+    \end{equation}
+    but due to unitary constrain also $b'' = c'' = 0$ meaning that we can simply finish the work by using the inverse $\mathcal{U}_3$ that is a two-level unitary matrix and have that
+    \begin{equation}
+        \mathcal{U}_3\mathcal{U}_2\mathcal{U}_1\mathcal{U} = \mathbb{1},
+    \end{equation}
+    leaving us with the fact that $\mathcal{U}_3\mathcal{U}_2\mathcal{U}_1 = \mathcal{U}^\dagger$, reconstructing the full matrix using simple two-levels opeations. It's easy to understand how the process can be scaled up to whatever dimension of the matrix allowing for the decomposition in two-level opeartions of all possible gates. We can also have an estimate of the number of operations inside such a decomposition and the idea is that for a $d$ dimensional matrix you need at most $d-1$ opeartions to eliminate the first row and have a $d-1$ matrix, then $d-2$ opeartions needs to be done for reducing it further and so on having at most a complexity of
+    \begin{equation}
+        (d-1) + (d-2) + \dots + 1 = \frac{d(d-1)}{2}.
+    \end{equation}
+    Taking into account that inside a quantum computer $d = 2^n$ we will have $\mathcal{O}(2^{2n})$ as complexity. 
+}
+\noindent
+Basically we have demonstrated o how two-level gates are universaly able to represent every possible gate taht we can imagine inside a quantum computer.
+
+We can then go further, since the set of two-level gates is infinite, and we can't imagine implementing an infinite number of gates inside a software to reproduce all possible gates. In fact, we can restict our view simply to the set of CNOT, that we will use to implement the SWAP, and of single-qubit gates meaning that we manipulate only a single qubit.
+\thm{CNOT and single qubit universality}
+{
+    Every two-level gate can be decomposed in a series of CNOT operations followed by a single qubit manipulation.
+}
+\pf{Proof}
+{
+    Basically we can imagine every two-level gate as a particular unitary matrix with all one on the diagonal and four coeffients around inside it needed to manipulate the two-states designed, similar to the one seen in the previous demonstration. We want to rewrite such a trasnformation simply using swap operations, that can be seen as permutations of the states, and a single qubit operations that can be written as
+    \begin{equation}
+        \tilde{\mathcal{U}} = \begin{pmatrix}
+            1 & \dots & \dots & \dots & \dots & 0\\
+            \vdots & \ddots & & & & \vdots\\
+            \vdots & & a & b & & \vdots\\
+            \vdots & & c & d & & \vdots\\
+            \vdots & & & & \ddots & \vdots\\
+            0 & \dots & \dots & \dots &\dots & 1
+        \end{pmatrix}.
+    \end{equation}
+    To see this we can make an example with a $4\times 4$ matrix bacting in the following way. The matrix $\mathcal{U}$ we are working with is the following 
+    \begin{equation}
+        \mathcal{U} = \begin{pmatrix}
+            a & 0 & b & 0\\
+            0 & 1 & 0 & 0\\
+            c & 0 & d & 0\\
+            0 & 0 & 0 & 1
+        \end{pmatrix},
+    \end{equation}
+    what we need to do is first see how we can swap the states, meaning that by using a permutation we can change the column and the rows of the matrix as if we are chaning the base of computation. In this way by using the permutations that bring $\ket{10}$ to $\ket{01}$, meaning the SWAP gate composed on CNOT in \eqref{eq:swapMatrix}, and see how the following it's true
+    \begin{equation}
+        SWAP(\ket{01}\to \ket{10})^\dagger\mathcal{U}SWAP(\ket{01}\to \ket{10}) = \begin{pmatrix}
+            a & b & 0 & 0\\
+            c & d & 0 & 0\\
+            0 & 0 & 1 & 0\\
+            0 & 0 & 0 & 1
+        \end{pmatrix},
+    \end{equation}
+    which is simply a single qubit gate and inverting the operation we can see how $\mathcal{U}$ can be written with two swaps and a $\tilde{\mathcal{U}}$ operation. On a much larger scale the idea is to perform a series of swap to bring the state close together forming a single qubit operation, do that, and then reswap the states to return to the original form. This approach is called \textbf{gray code} algorithm and allows to generally write down every two-level operation as one single qubit one and $2(n-1)$ swaps at most, where $n$ is the number of qubit.
+}
+\noindent
+Thanks to this last result we can say that the all set of the two-level operation can be reduced further to the one comprhending CNOT and single qubit operations, much smaller and simpler to implement inside a real quantum computer. Also, we can make an estimate of the total number of operations needed in order to recreate exactly a particular gate $\mathcal{U}$ inside a quantum computer composed by $n$ qubit. In fact, we have that every opeartion can be written as, at most, $2^{2n}$ two-level operation and every one of them need a $\tilde{\mathcal{U}}$ and $2(n - 1)$ swaps giving a total complexity of
+\begin{equation}
+    \mathcal{O}(n^22^{2n}),
+\end{equation} 
+which is quite highy but allows to have an exact result for every possible operation.
+
+\subsection{Single qubit gates approximation}
+
+We have seen how in order to decompose every possible gate inside a quantum computer we need the CNOT one and all the single qubit operartion that we can perform. Still, the latter have infinite possibilities inside quantum computers, and we can't implement all of that on a hardware level. For this reason, we want to create a small finite set of operation that can reproduce all of them also in an approximate way.
+
+The idea is to find out a set of operations that allow us to find out a $\mathcal{V}$ that minimize the error in the estimate of the real $\mathcal{U}$, where the error is defined as
+\begin{equation}
+    E[\mathcal{U}, \mathcal{V}] = \max_{\ket{\psi}}\left\lVert \left( \mathcal{U} - \mathcal{V} \right)\ket{\psi} \right\rVert. 
+\end{equation}
+There are a several way in which such a minimization can be done using varius set of opeartor but the most used one is the standard composed by the following
+\begin{equation}
+    \mathcal{S} = \{H, CNOT, T\}.
+\end{equation}
+Only those three gates will be able to create every possible operation inside a quantum computer. In particular, we need to demonstrate that we are able to generate all the single qubit gate up to a certain error using them, and can be seen as follows.
+\thm{$T$ and $H$ universality}
+{
+    Let $R_{\vb{n}}(\theta)$ be a generic roation of the single qubit state, where $\vb{n}$ is the versor that defines the roation and $\theta$ the angle of the rotation. Then for every $\epsilon > 0$ exist a $\vb{m} \in \mathbb{N}^3$ so that by defining $R_T = THTH$ we will have
+    \begin{equation}
+        E[R_{\vb{n}}(\theta), R_T^{m_1} HR_T^{m_2}H R_T^{m_3}] < \epsilon.
+    \end{equation}
+}
+\pf{Proof}
+{
+    Also here we haven't done a real demonstration of the result, but still we can see the main reasons why that works. The idea is to first recall that every rotation can be written as
+    \begin{equation}
+        \label{eq:UniversalApprox}
+        R_{\vb{n}}(\theta) = \exp\left( -i\frac{\theta}{2}\vb{n}\vdot \vb*{\sigma} \right) = \cos\left( \frac{\theta}{2} \right)\mathbb{1} - i\sin\left( \frac{\theta}{2} \right)\vb{n} \vdot \vb*{\sigma},
+    \end{equation}
+    and then look at how the operator $R_T$ look like by writing it down explicitly. To do that we need first to recall two things
+    \begin{align}
+        &T = \exp\left( -i\frac{\pi/4}{2}Z \right), &HTH = \exp\left( -i\frac{\pi/4}{2}X \right),
+    \end{align}
+    so that we can easily write down the wanted rotation as
+    \begin{equation}
+        R_T = \exp\left( -i\frac{\pi/4}{2}Z \right)\exp\left( -i\frac{\pi/4}{2}X \right) = \cos^2\left( \frac{\pi}{8} \right)\mathbb{1} - i\left[ \cos\frac{\pi}{8}\left( X + Z \right) + \sin\frac{\pi}{8} Y \right]\sin\left( \frac{\pi}{8} \right).
+    \end{equation}
+    Such thanks to the properties of the special angle $\pi/8$ such operator defines exactly a rotation respect to a particular versor $\tilde{\vb{n}}$ and angle $\tilde{\theta}$ defined by
+    \begin{align}
+        &\tilde{\vb{n}} = \frac{\left( \cos\frac{\pi}{8}, \sin \frac{\pi}{8}, \cos \frac{\pi}{8} \right)}{\sqrt{2\cos^2\frac{\pi}{8} + \sin^2\frac{\pi}{8}}}, &\cos \frac{\tilde{\theta}}{2} = \cos^2\frac{\pi}{8}.
+    \end{align}
+    Now, this is really good since the angle $\tilde{\theta}$ is irrationale meaning that for every angle $\phi \in [0, 2\pi]$ and $\epsilon > 0$ exist an integer $m$ so that
+    \begin{equation}
+        \abs{\phi - \left\lVert m\tilde{\theta} \right\rVert_{2\pi} } < \epsilon,
+    \end{equation}
+    where here $\left\lVert \vdot \right\rVert_{2\pi} $ indicates the module of $2\pi$. Meaning that we are able to came close to every possible angle of rotation that we want in this contest. In this way we can understand how the relation in \eqref{eq:UniversalApprox} holds true in general so that a single qubit gate can be approximated using in general a $\mathcal{O}(m^2/\epsilon)$ number of gates.
+}
+\noindent
+That's it, we have demonstrated how by using a set composed by only three gates we are able to generate universally every possible operation that we can imagine, and that is exactly what happens inside a quantum computer. If you give as imput to the computer to perform a rotation of $\pi/9$ in reality he is decomposing it in a series of $\pi/8$ and hadamart gate to approximate it to a ceratin precision.
+
+In reality exist a much more rich theory that allows us to give a better approximation that we have only cited during the course and is the following.
+\thm{Solovay-Kitaev theorem}
+{
+    An arbitrary single qubit gate can be approximated to an accuracy $\epsilon$ using at most
+    \begin{align}
+        &\mathcal{O}\left(\log^c\frac{1}{\epsilon}\right), &c \sim 2.
+    \end{align}
+}
+\noindent
+Meaning that if we need $m$ CNOT and $m$ single qubit gates we will have a final complexity for the operation given by $\mathcal{O}\left( m\log^c(m/\epsilon) \right)$, not bad at all.
