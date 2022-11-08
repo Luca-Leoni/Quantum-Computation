@@ -329,3 +329,98 @@ These two gates are the building blocks that will allow us to perform the quantu
 }
 \noindent
 Therefore, this algorithm allows us to search inside a set of states of dimensions $2^n$ the ones that satisfy the condition imposed by a wanted function $f$. Also, all of this is done by using a minimal number of operations that scales linearly with the number of qubit that we are using, beating in an increadible way the classical search algorithm that scales exponentially.
+
+\subsection{Hamiltonian simulation}
+
+On of the main goals that quantum computers scientists whant to achive is the possibility of simulate complex quantum systems efficiently thanks to the intrinsic quantum nature of QC themselfes. Basically the goal is to find a way to solve the SE inside a quantum computer finding out the time evolution operator of the system, which we recal in a time-independent $\mathcal{H}$ is
+\begin{align}
+    &\ket{\psi(t)} = \mathcal{U}(t)\ket{\psi_0}, &\mathcal{U}(t) = \exp\left( -i \frac{\mathcal{H}t}{\hbar} \right).
+\end{align}
+In order to do that we shall approximate the form of $\mathcal{U}(t)$ somehow using the qubit that we have avaliable, and the idea is the one of discretize it along with also $\ket{\psi}$. Basically, $\ket{\psi}$ will be thought as a function $\psi(\vb{x})$ where $\vb{x}\in\mathbb{R}^d$, and we are going to store only a set of values, of that function defined by the position on a lattice $\{x_j\}_j$, inside the qubit. Such discretization, then, nedds to be used also for the Hamiltionan, having an approximate form also for it, which define the evolution operator that we can then use to evolve the state.
+
+To understand better how this is done we will assume that $\mathcal{H}$ is composed by a series of smaller components $\mathcal{H}_k$ containing only short range interactions, like
+\begin{align}
+    &\mathcal{H} = \sum_{k=1}^L \mathcal{H}_k = \sum_{\langle nm \rangle} Z_nZ_m +h\sum_l\left( Z_l + X_l \right).
+\end{align}
+This is an Ising Hamiltonian that has only on-site terms with longitudinal and trasversal field, and an interaction term that still applies only on nierest neighbours. Basically, we assume that $\mathcal{H}_k$ has interaction that at most account for a finite number of elements near a particular qubit. Inside these assumptions we can easily go and find out a way to approximate evolution operator by using a Taylor expansion as
+\begin{equation}
+    \label{eq:EasyApprox}
+    \mathcal{U}(\Delta t) = \sum_{k=0}^\infty \frac{1}{k!}\left( -i\frac{\mathcal{H}\Delta t}{\hbar} \right)^k = \mathbb{1} - i\frac{\mathcal{H}\Delta t}{\hbar} + \mathcal{O}(\Delta t^2),
+\end{equation}
+where $\Delta t$ is the time discretization, assumed to be small. Also, from this poin on we will assume $\hbar = 1$ for simplicity of notation. We can see how the sum can be truncated to obtain an approximation of $\mathcal{U}$ that becomes better as the time discretization goes down, which is greate but not too greate. A better approach would be taking advantage of the decomposition of the Hamiltionian in pieces in order to rewrite the exponential as product of simpler operators that we know how to work with. Nevertheless, it's easy to see how also in the simple case we have looked at the $\mathcal{H}_k$ does not commute $\left[ \mathcal{H}_k, \mathcal{H}_m \right] \neq 0$, meaning that
+\begin{equation}
+    \exp\left( -it\sum_k\mathcal{H}_k \right) \neq \prod_{k}\exp(-it\mathcal{H}_k).
+\end{equation}
+This seems to set the sloppy \eqref{eq:EasyApprox} as the only possible way to approximate the operator, but it's not completely true. In fact, it's possible to demonstrate a result that saves the day.
+\thm{Trotler decomposition}
+{
+    Taken two non commuting operators $A, B$ it's possible to decompose the exponential in the following way
+    \begin{equation}
+        \exp\left[ i\left( A + B \right)t \right] = \lim_{N\to\infty}\left( e^{i\frac{t}{N}A}e^{i\frac{t}{N}B} \right)^N.
+    \end{equation}
+}
+\pf{Proof}
+{
+    We can use \eqref{eq:EasyApprox} to write down the following form
+    \begin{equation}
+        e^{i\frac{t}{N}A}e^{i\frac{t}{N}B} = \left[ \mathbb{1} - i\frac{\Delta t}{N}A + \mathcal{O}(1/N^2) \right]\left[ \mathbb{1} - i\frac{\Delta t}{N}B + \mathcal{O}(1/N^2) \right] = \mathbb{1} + i\frac{t}{N}\left( A + B \right) + \mathcal{O}(1/N^2),
+    \end{equation}
+    which elevated to the power of $N$ allow for the following result to show up
+    \begin{equation}
+        \left( e^{i\frac{t}{N}A}e^{i\frac{t}{N}B} \right)^N = \mathbb{1} + \sum_{K=1}^N \binom{N}{k}\frac{\left[ it\left( A + B \right) \right]^k}{N^k} + \mathcal{O}(1/N). 
+    \end{equation}
+    Here, is possible also to see how the binomial coefficents can be approximated in the following way
+    \begin{equation}
+        \binom{N}{k} \frac{1}{N^k} \sim \frac{1}{k!} + \mathcal{O}(1/N),
+    \end{equation}
+    having that the final form becomes exactly the sum of the Taylor expansion wanted in the limit of $N\to\infty$.
+}
+\noindent
+Such a result allows for a better way to approximate the evolution operator by setting a ceratin discretization defined by $N$ and then perform several steps in the middle. This can be also done analitically to find out some important closed formulas in order to have a better computational approach, and the most used one is the \textbf{Baker Hausdorff formula}
+\begin{equation}
+    e^{i(A+B)\Delta t} = e^{iA\Delta t}e^{iB\Delta t} e^{-\frac{i}{2}[A, B]\Delta t^2} + \mathcal{O}(\Delta t^3).
+\end{equation}
+Which is a good improvment of the previous naive approximation.
+
+Let's now imagine that we want to work in order to simulate a 1D particle inside a potential $V(x)$, we will have that the system is described as
+\begin{align}
+    &\mathcal{H} = \frac{\hat{p}^2}{2m} + V(\hat{x}), &x\in [-d, d].
+\end{align}
+In this situation we discretize the space to have a spacing $a = 2d/N$ and the points on the lattice that we are working with are described by the values
+\begin{align}
+    &x_j = aj, &j\in\left[ -N/2, N/2 \right].
+\end{align}
+In this way we will define the position basis as the set $\{x_j\}$ so that the following is true 
+\begin{equation}
+    V(\hat{x}) \ket{x_j} = V(x_j) \ket{x_j},
+\end{equation}
+having that they diagonalize the potential part of the Hamiltonian. Using this base also the state of the particle can be written as a linear combination of the type
+\begin{equation}
+    \ket{\psi} = \sum_{j = -N/2}^{N/2} \alpha_j \ket{x_j}.
+\end{equation}
+Therefore, this set allows for the discretization of both the state of the particle and a part of the Hamiltonian, to complete our needs we will need also to store the momentum part of the Hamiltonian, but it's not diagonal in such base. For this reason, the idea is to write $\hat{p}$ as the Fourier transform of the position operator $\mathcal{U}_{FT}\hat{x}\mathcal{U}_{FT}^\dagger$ since we know to perform the Fourier tranform of the state, meaning that we can effectivelly evaluate also $\hat{p}\ket{x_j}$ having all that we need.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Immagini/HSim.pdf}
+    \caption{
+        Quantum circuit used in order to simulate the simple system of the example, if the circuitis folled it's effectivelly possible to see how the final form is exactly the initial state plus the wanted phase and the ancilla qubit.
+    }
+    \label{fig:HSim}
+\end{figure}
+
+\ex{Simple case}
+{
+    The prof showed a really simple example of system simulation on a quantum computer, where the Hamiltonian is simply 
+    \begin{equation}
+        \mathcal{H} = Z_1\otimes Z_2\otimes Z_3,
+    \end{equation}
+    meaning that three qubit are studied and the base is so $\ket{q_1q_2q_3}$. We shall also remember that the effect of $Z$ is changing sign to the state if it's value is $1$ or not touching it otherwise. Knowing it allows us to find out how the Hamiltonian act on a general state having
+    \begin{align}
+        &\mathcal{H}\ket{q_1q_2q_3} = \delta_{q_1q_2q_3}\ket{q_1q_2q_3}, &\delta_{q_1q_2q_3} = \begin{cases}
+            1 & \#1\text{ is even},\\
+            -1 & \#1\text{ is odd}
+        \end{cases}.
+    \end{align}
+    Using this we can implement a quantum circuit that simulates the evolution by adding the correct phase to a general state of the base every time is applied to it. The circuit we are talking about is represented in \figref{fig:HSim}, where one can see how the ancilla qubit will be $1$ befor the phase gate if an odd number of 1 are present in the initial state, and then will return to the initial state. Therefore, the final result is simply $e^{i\delta\Delta t}\ket{q_1q_2q_3}\otimes\ket{0}$, the state has effectivelly evolved as we wanted.
+}
