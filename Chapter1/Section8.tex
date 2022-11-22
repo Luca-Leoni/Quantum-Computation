@@ -117,4 +117,20 @@ We have so an efficient way to spot the state errors and correct them by simply 
     &S_1 = X_{B1}X_{B2} = (X_1X_2X_3)\otimes(X_4X_5X_6)\otimes\mathbb{1}_{B3},\\
     &S_2 = X_{B2}X_{B3} = \mathbb{1}_{B1} \otimes (X_4X_5X_6)\otimes (X_7X_8X_9).
 \end{align}
-In this way we can be sure to see every possible state and phase flip inside our circuit and be able to correct them properly.
+In this way we can be sure to see every possible state and phase flip inside our circuit and be able to correct them properly. That was all we needed in our machines, in fact we can see how every possible error can be described in terms of those two primitive problems as follows.
+\thm{Universality of Shor code}
+{
+    Every possible error inside quantum computers can be decomposed in phase and state flips, so that Shor code forms a universal error correcting procedure.
+}
+\pf{Proof}
+{
+    In order to prove that we will need some notions from the theory of open systems. Meaning that inside the context of SE evolution the state is preserved, and no random error should occure all is deterministic. Still, when the system is coupled with environment random change in the state can appear and $\ket{\psi}$ evolves from a pure state to a mixed one. Such evolution can be described by a more general version of the dynamic equation called \textbf{Lindblad equation} which is well known, and shows an evolution that can be described by a \textbf{quantum channel} acting as follows
+    \begin{equation}
+        \ket{\psi} \mapsto \sum_i E_i^\dagger \ketbra{\psi} E_i.
+    \end{equation}
+    Where, $E_i$ is a set of operators with the property of being complete meaning $\sum_i E_i^\dagger E_i = \mathbb{1}$, condition needed in order to conserve the norm of the state. Now, we can imagine having a $1$-qubit situation so that $E_i$ are $2\times 2$ matrices and therefore can be written as expansion of the Pauili matrices base as
+    \begin{equation}
+        E_i = e_0\mathbb{1} + e_1 X + e_2Y + e_3Z.
+    \end{equation}
+    We can interprete this result by seing how the part with $\mathbb{1}$ gives out the normal evolution, the SE like one with no errors, while all the others describe possible evolution when \textbf{decoherence}, errors, occours. In particular, we can see that the possible errors are given by the state flip, the $X$ part, phase flip, the $Z$, and the $Y$ one that can be written as $ZX$ giving rise to a situation when both occours. Therefore, all possible errors are linear combinations of the primitive ones that Shor code can predict and cure.
+}

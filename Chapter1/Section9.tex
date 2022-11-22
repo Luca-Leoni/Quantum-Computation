@@ -1,0 +1,61 @@
+\section{Hybrid algorithm}
+
+In the last moment of the course the prof just introduced the concept of hybrid algorithms, which is a way of incorporating quantum routines inside classical algorithms in order to speed up computaitons. The main idea is to use quantum computers in order to evaluate complex functions inside classical algorithms, like minimization ones, since they can do it faster.
+
+Therefore, I will write down the simple example that she showed during class and stop there, since the course has effectivelly stopped at that moment.
+
+\subsection{Quantum Approximation Optimizzation Algorithm}
+
+The idea is that we want to minimize the energy of a system finding the ground state of a Hamiltonian $\hat{\mathcal{H}}_c$. To do that an ansatz for the GS $\ket{\psi}$ is created depending on some parameters $\ket{\psi(\vb*{\theta})}$ and the set $\vb*{\theta}_0$ that minimize the function
+\begin{equation}
+    f(\vb*{\theta}) = \ev{\hat{\mathcal{H}}_c}{\psi(\vb*{\theta})},
+\end{equation}
+is found out by minimization. What we want to do is evaluate $f$ by using quantum algorithm and find the minimum using the classical approach since QC still are not good at it. Therefore, the general outline of the algorithm should be the following:
+\begin{enumerate}[label*=\protect\fbox{\arabic{enumi}}]
+    \item Prepare the ansatz $\ket{\psi(\theta)}$ through the use of a series of operator $\{\mathcal{U}_{\theta_1}, \mathcal{U}_{\theta_2}, \dots, \mathcal{U}_{\theta_p}\}$, where $p$ is called depth of the algorithm;
+    \item Use $\hat{\mathcal{H}}_c$ to measure the state obtained state $\ket{\psi(\vb*{\theta})}$ $N$ times, so that every time we will obtain a different weigenvalue $E_\lambda$ with probability $p_\lambda$ that we can use to approximate $f$ as follws
+    \begin{equation}
+        \label{eq:QuantumApproxF}
+        f(\vb*{\theta}) = \sum_\lambda E_\lambda p_\lambda \approx \sum_\lambda E_\lambda \frac{n_\lambda}{N}.    
+    \end{equation} 
+    \item Pass the result to the classical computer to perform the minimization algorithm.
+\end{enumerate}
+One can easily understand how perform the computation \eqref{eq:QuantumApproxF} is able to approximate the value of $f$ in a sufficiently accurate way that is easier to achive than perform the integration of the high dimensional $\ket{\psi}$. Such an algorithm seems already good to work, but in reality problems are present on both first and third point of the whole construction. We will focus on the first step since it's more interesting as a problem how to effectivelly construct the $\mathcal{U}_{\theta}$ operators, and we will only give a glimps of the problem in the third point.
+
+To construct the ansatz the main approach used is to work with evolution in the space of parameters guided by two Hamiltonians $\hat{\mathcal{H}}_1$ and $\hat{\mathcal{H}}_2$ so that the operators can be written as 
+\begin{equation}
+    \mathcal{U}_{\theta_i} = e^{i\theta_i\hat{\mathcal{H}}_1}e^{i\theta_{i+1}\hat{\mathcal{H}}_2},
+\end{equation}
+meaning that now, the parameters grows from $p$ to $2p$. Using this forms allows for a good mobility inside the state space only if the two operators are not close togheter, meaning that if $\hat{\mathcal{H}}_1 = \lambda\hat{\mathcal{H}}_2$ a problemwould occur since the evolution will only span the state of $\hat{\mathcal{H}}_1$ and all the possible ones. For this reason we need to  take Hamiltonians that are different from each other's having
+\begin{equation}
+    \left[ \hat{\mathcal{H}}_1, \hat{\mathcal{H}}_2 \right] \neq 0.
+\end{equation}
+That is a requirement, but it's not sad that is the only one needed but still we don't know for certain, as we don't know if exist a possible best choice for the two operator in order to arrive at the result quicker than all the others way. Nevertheless, what we can do now is show the main tricks tha tare used in order to construct the state:
+\begin{itemize}[align=left, leftmargin=*]
+    \item[\textbf{Trotler.}] One possible situation is when we have $\hat{\mathcal{H}}_c = \hat{\mathcal{H}}_1 + \hat{\mathcal{H}}_2$ with the two pieces that do not commute. In that case we can use the Trotler result in order to approximate the evolution that brings to the ground state as
+    \begin{equation}
+        e^{it\hat{\mathcal{H}}_c} \approx \left( e^{i\epsilon\hat{\mathcal{H}}_1}e^{i\epsilon\hat{\mathcal{H}}_2} \right)^N.
+    \end{equation}
+    \item[\textbf{Exact Hamiltonian.}] In the case we know the exact Hamiltonian of the system is quite helpfull instead of going trotler using it so that $\hat{\mathcal{H}}_1 = \hat{\mathcal{H}}_c$ and choose the second simply in order to not commute.
+\end{itemize}
+In both ways we should have at the end a series of operations that can span all the phase space depending on the paramters $\vb*{\theta}$ that needs to be optimized. And the problem in the third point is exactly there, the optimization of $\vb*{\theta}$ is a pain for several reasons. The main problem is that the energetic landscape inside parameter space looks really like a plateu with a big minimum in a certain point, is just like that we need to accept that. Nevertheless, such a situation is a complicated one since means that $\grad_{\vb*{\theta}} f(\vb*{\theta}) \approx 0$ in a wide range. Therefore, the simple gradient descend method can't be used efficiently we need more complex algorithms but find the right one is a challenge that we are still facing.
+\ex{Maximal independent set}
+{
+    At a last the prof made a simple example of minimization problem that can be tackled using those hybrid algorithms. The problem is to find out a particular set of nodes inside a network and to do that you describe the nodes using a state like
+    \begin{equation}
+        \ket{0110011\dots},
+    \end{equation}
+    where every qubit rapresent a specific node and $1$ means that are in the wanted set, while $0$ otherwise. The only thing that remains to do is to engenier a Hamiltonian that has the right state as the gorund state, but that can be done by using an appropriate Ising model
+    \begin{align}
+        &\hat{\mathcal{H}}_c = \sum_i Z_i + P\sum_{\langle ij \rangle} Z_iZ_j, &f_c = \ev{\hat{\mathcal{H}}_c}{\psi}.
+    \end{align}
+    In this way you only need to decide the right nearest negihbours and the value of the penalty $P$ to obtain the wanted result. Also, this approch allows for the use of the second kind of approach to create the ansatz really easily by using as $\hat{\mathcal{H}}_1 = \hat{\mathcal{H}}_c$ and $\hat{\mathcal{H}}_2 = \sum_i X_i$ that usually can make the algorithm efficient.
+}
+\nt
+{
+    It's interesting to understand also how in the approach described for the creation of the ansatz it's obvius that we will have only an approximation of the expected $\ket{\psi(\vb*{\theta})}$ state, but still that is not a problem. In fact, one can see how defining the fidelity of the procedure as
+    \begin{displaymath}
+        Fid = \braket{\psi_{exact}}{\psi(\vb*{\theta})},
+    \end{displaymath}
+    we have that a fidelity fo $0.8$ is already good to have values of energies precise up to six or seven decimals since the energy converges much faster thatn the eigenstate.
+}
